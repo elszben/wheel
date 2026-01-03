@@ -6,10 +6,9 @@ class WheelOfFortune {
         this.resultDiv = document.getElementById(resultId);
         this.sectionsList = document.getElementById(sectionsListId);
 
-        // Wheel properties
-        this.centerX = this.canvas.width / 2;
-        this.centerY = this.canvas.height / 2;
-        this.radius = 220;
+        // Set canvas size
+        this.setCanvasSize();
+
         this.rotation = 0;
         this.angularVelocity = 0;
         this.isSpinning = false;
@@ -24,11 +23,41 @@ class WheelOfFortune {
         this.init();
     }
 
+    setCanvasSize() {
+        // Get the container width
+        const container = this.canvas.parentElement;
+        const size = Math.min(container.clientWidth - 40, 600);
+
+        // Set canvas display size
+        this.canvas.style.width = size + 'px';
+        this.canvas.style.height = size + 'px';
+
+        // Set canvas actual size (for retina displays)
+        const scale = window.devicePixelRatio || 1;
+        this.canvas.width = size * scale;
+        this.canvas.height = size * scale;
+
+        // Reset and scale the context to match (important: get fresh context after size change)
+        this.ctx = this.canvas.getContext('2d');
+        this.ctx.scale(scale, scale);
+
+        // Update wheel properties (use display size, not canvas buffer size)
+        this.centerX = size / 2;
+        this.centerY = size / 2;
+        this.radius = size / 2 - 30;
+    }
+
     init() {
         // Load sections from HTML
         this.loadSectionsFromHTML();
         this.drawWheel();
         this.spinButton.addEventListener('click', () => this.spin());
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            this.setCanvasSize();
+            this.drawWheel();
+        });
     }
 
     generateBrightNeonColor() {
@@ -45,6 +74,26 @@ class WheelOfFortune {
             text: item.getAttribute('data-text'),
             color: this.generateBrightNeonColor()
         }));
+    }
+
+    wrapText(words, maxWidth) {
+        const lines = [];
+        let currentLine = words[0];
+        
+        for (let i = 1; i < words.length; i++) {
+            const testLine = currentLine + ' ' + words[i];
+            const testWidth = this.ctx.measureText(testLine).width;
+            
+            if (testWidth > maxWidth) {
+                lines.push(currentLine);
+                currentLine = words[i];
+            } else {
+                currentLine = testLine;
+            }
+        }
+        lines.push(currentLine);
+        
+        return lines;
     }
 
     renderSectionsList() {
@@ -107,8 +156,49 @@ class WheelOfFortune {
             this.ctx.rotate(startAngle + anglePerSection / 2);
             this.ctx.textAlign = 'center';
             this.ctx.fillStyle = '#fff';
-            this.ctx.font = 'bold 18px Arial';
-            this.ctx.fillText(this.sections[i].text, this.radius * 0.65, 5);
+            
+            // Adjust font size based on text length and available space
+            const text = this.sections[i].text;
+            const maxWidth = this.radius * 0.5; // Maximum width for text
+            let fontSize = 18;
+            
+            // Reduce font size for longer text
+            if (text.length > 15) {
+                fontSize = 14;
+            }
+            if (text.length > 20) {
+                fontSize = 12;
+            }
+            
+            this.ctx.font = `bold ${fontSize}px Arial`;
+            
+            // Measure text width and adjust if needed
+            let textWidth = this.ctx.measureText(text).width;
+            if (textWidth > maxWidth) {
+                // Try wrapping text into multiple lines
+                const words = text.split(' ');
+                if (words.length > 1) {
+                    const lines = this.wrapText(words, maxWidth);
+                    const lineHeight = fontSize + 2;
+                    const totalHeight = lines.length * lineHeight;
+                    const startY = -totalHeight / 2 + lineHeight / 2;
+                    
+                    lines.forEach((line, index) => {
+                        this.ctx.fillText(line, this.radius * 0.65, startY + index * lineHeight);
+                    });
+                } else {
+                    // Single long word - just reduce font size more
+                    while (textWidth > maxWidth && fontSize > 8) {
+                        fontSize -= 1;
+                        this.ctx.font = `bold ${fontSize}px Arial`;
+                        textWidth = this.ctx.measureText(text).width;
+                    }
+                    this.ctx.fillText(text, this.radius * 0.65, 5);
+                }
+            } else {
+                this.ctx.fillText(text, this.radius * 0.65, 5);
+            }
+            
             this.ctx.restore();
         }
 
