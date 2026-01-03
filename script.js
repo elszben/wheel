@@ -26,7 +26,14 @@ class WheelOfFortune {
     setCanvasSize() {
         // Get the container width
         const container = this.canvas.parentElement;
-        const size = Math.min(container.clientWidth - 40, 600);
+        let containerWidth = container.clientWidth;
+        
+        // If container is hidden (0 width), use a default size
+        if (containerWidth === 0) {
+            containerWidth = 600;
+        }
+        
+        const size = Math.min(containerWidth - 40, 600);
 
         // Store display size
         this.displaySize = size;
@@ -290,7 +297,7 @@ class WheelOfFortune {
 }
 
 // Tab switching functionality
-function initTabs() {
+function initTabs(activityWheel, durationWheel) {
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -305,14 +312,23 @@ function initTabs() {
             // Add active class to clicked button and corresponding content
             button.classList.add('active');
             document.getElementById(`${tabId}-tab`).classList.add('active');
+            
+            // Redraw the wheel for the newly visible tab
+            setTimeout(() => {
+                if (tabId === 'activity') {
+                    activityWheel.setCanvasSize();
+                    activityWheel.drawWheel();
+                } else if (tabId === 'duration') {
+                    durationWheel.setCanvasSize();
+                    durationWheel.drawWheel();
+                }
+            }, 10);
         });
     });
 }
 
 // Initialize the wheels when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    initTabs();
-
     const activityWheel = new WheelOfFortune(
         'activityWheelCanvas',
         'activitySpinButton',
@@ -326,4 +342,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'durationResult',
         'durationSectionsList'
     );
+    
+    initTabs(activityWheel, durationWheel);
 });
