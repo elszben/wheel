@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Fortune</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="tabs">
+        <button class="tab-button active" data-tab="activity">Activity</button>
+        <button class="tab-button" data-tab="duration">Duration</button>
+    </div>
+
+    <div class="main-container">
+        <!-- Activity Tab Content -->
+        <div class="tab-content active" id="activity-tab">
+            <aside class="sidebar">
+                <h2>Activity Sections</h2>
+                <div id="activitySectionsList" class="sections-list">
+                    <div class="section-item" data-text="Work out" data-color="#FF6B6B"></div>
+                    <div class="section-item" data-text="Calligraphy" data-color="#4ECDC4"></div>
+                    <div class="section-item" data-text="Read" data-color="#F7DC6F"></div>
+                    <div class="section-item" data-text="Watch Avatar" data-color="#B66FCE"></div>
+                    <div class="section-item" data-text="Build a business" data-color="#BE8AAA"></div>
+                    <div class="section-item" data-text="Organize things" data-color="#BB8FCE"></div>
+                    <div class="section-item" data-text="<CENSORED>" data-color="#85C1E2"></div>
+                </div>
+                <button id="addActivitySectionButton" class="add-section-button">+ Add Section</button>
+            </aside>
+
+            <div class="container">
+                <h1>Activity Wheel</h1>
+
+                <div class="wheel-container">
+                    <div class="pointer"></div>
+                    <canvas id="activityWheelCanvas" width="500" height="500"></canvas>
+                </div>
+
+                <button id="activitySpinButton" class="spin-button">Go</button>
+
+                <div id="activityResult" class="result"></div>
+            </div>
+        </div>
+
+        <!-- Duration Tab Content -->
+        <div class="tab-content" id="duration-tab">
+            <aside class="sidebar">
+                <h2>Duration Sections</h2>
+                <div id="durationSectionsList" class="sections-list">
+                    <div class="section-item" data-text="5 minutes" data-color="#FF6B6B"></div>
+                    <div class="section-item" data-text="10 minutes" data-color="#4ECDC4"></div>
+                    <div class="section-item" data-text="15 minutes" data-color="#45B7D1"></div>
+                    <div class="section-item" data-text="25 minutes" data-color="#FFA07A"></div>
+                    <div class="section-item" data-text="30 minutes" data-color="#98D8C8"></div>
+                </div>
+                <button id="addDurationSectionButton" class="add-section-button">+ Add Section</button>
+            </aside>
+
+            <div class="container">
+                <h1>Duration Wheel</h1>
+
+                <div class="wheel-container">
+                    <div class="pointer"></div>
+                    <canvas id="durationWheelCanvas" width="500" height="500"></canvas>
+                </div>
+
+                <button id="durationSpinButton" class="spin-button">Go</button>
+
+                <div id="durationResult" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
