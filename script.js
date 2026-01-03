@@ -31,11 +31,19 @@ class WheelOfFortune {
         this.spinButton.addEventListener('click', () => this.spin());
     }
 
+    generateBrightNeonColor() {
+        // Generate bright, neon colors with high saturation and lightness
+        const hue = Math.floor(Math.random() * 360);
+        const saturation = 70 + Math.floor(Math.random() * 30); // 70-100%
+        const lightness = 50 + Math.floor(Math.random() * 20); // 50-70%
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
+
     loadSectionsFromHTML() {
         const items = this.sectionsList.querySelectorAll('.section-item[data-text]');
         this.sections = Array.from(items).map(item => ({
             text: item.getAttribute('data-text'),
-            color: item.getAttribute('data-color')
+            color: this.generateBrightNeonColor()
         }));
     }
 
