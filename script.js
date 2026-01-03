@@ -1,11 +1,10 @@
 class WheelOfFortune {
-    constructor(canvasId, buttonId, resultId, sectionsListId, addSectionButtonId) {
+    constructor(canvasId, buttonId, resultId, sectionsListId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
         this.spinButton = document.getElementById(buttonId);
         this.resultDiv = document.getElementById(resultId);
         this.sectionsList = document.getElementById(sectionsListId);
-        this.addSectionButton = document.getElementById(addSectionButtonId);
 
         // Wheel properties
         this.centerX = this.canvas.width / 2;
@@ -29,9 +28,7 @@ class WheelOfFortune {
         // Load sections from HTML
         this.loadSectionsFromHTML();
         this.drawWheel();
-        this.renderSectionsList();
         this.spinButton.addEventListener('click', () => this.spin());
-        this.addSectionButton.addEventListener('click', () => this.addSection());
     }
 
     loadSectionsFromHTML() {
@@ -50,65 +47,20 @@ class WheelOfFortune {
             const sectionItem = document.createElement('div');
             sectionItem.className = 'section-item';
 
-            // Color picker
-            const colorPicker = document.createElement('input');
-            colorPicker.type = 'color';
-            colorPicker.value = section.color;
-            colorPicker.className = 'color-picker';
-            colorPicker.addEventListener('input', (e) => {
-                this.sections[index].color = e.target.value;
-                this.drawWheel();
-            });
+            // Color indicator (non-editable)
+            const colorIndicator = document.createElement('span');
+            colorIndicator.className = 'color-indicator';
+            colorIndicator.style.backgroundColor = section.color;
 
-            // Text input
-            const textInput = document.createElement('input');
-            textInput.type = 'text';
-            textInput.value = section.text;
-            textInput.className = 'section-text';
-            textInput.addEventListener('input', (e) => {
-                this.sections[index].text = e.target.value;
-                this.drawWheel();
-            });
+            // Text label (non-editable)
+            const textLabel = document.createElement('span');
+            textLabel.className = 'section-label';
+            textLabel.textContent = section.text;
 
-            // Delete button with trash icon
-            const deleteButton = document.createElement('button');
-            deleteButton.innerHTML = `
-                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                </svg>
-            `;
-            deleteButton.className = 'delete-button';
-            deleteButton.title = 'Delete section';
-            deleteButton.addEventListener('click', () => {
-                console.log('Delete button clicked for index', index);
-                if (this.sections.length > 2) {
-                    this.sections.splice(index, 1);
-                    this.renderSectionsList();
-                    this.drawWheel();
-                } else {
-                    alert('You must have at least 2 sections!');
-                }
-            });
-
-            sectionItem.appendChild(colorPicker);
-            sectionItem.appendChild(textInput);
-            sectionItem.appendChild(deleteButton);
+            sectionItem.appendChild(colorIndicator);
+            sectionItem.appendChild(textLabel);
             this.sectionsList.appendChild(sectionItem);
         });
-    }
-
-    addSection() {
-        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F38181', '#AA96DA'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-        this.sections.push({
-            text: `Prize ${this.sections.length + 1}`,
-            color: randomColor
-        });
-
-        this.renderSectionsList();
-        this.drawWheel();
     }
 
     drawWheel() {
@@ -264,15 +216,13 @@ document.addEventListener('DOMContentLoaded', () => {
         'activityWheelCanvas',
         'activitySpinButton',
         'activityResult',
-        'activitySectionsList',
-        'addActivitySectionButton'
+        'activitySectionsList'
     );
 
     const durationWheel = new WheelOfFortune(
         'durationWheelCanvas',
         'durationSpinButton',
         'durationResult',
-        'durationSectionsList',
-        'addDurationSectionButton'
+        'durationSectionsList'
     );
 });
