@@ -28,6 +28,9 @@ class WheelOfFortune {
         const container = this.canvas.parentElement;
         const size = Math.min(container.clientWidth - 40, 600);
 
+        // Store display size
+        this.displaySize = size;
+
         // Set canvas display size
         this.canvas.style.width = size + 'px';
         this.canvas.style.height = size + 'px';
@@ -79,11 +82,11 @@ class WheelOfFortune {
     wrapText(words, maxWidth) {
         const lines = [];
         let currentLine = words[0];
-        
+
         for (let i = 1; i < words.length; i++) {
             const testLine = currentLine + ' ' + words[i];
             const testWidth = this.ctx.measureText(testLine).width;
-            
+
             if (testWidth > maxWidth) {
                 lines.push(currentLine);
                 currentLine = words[i];
@@ -92,7 +95,7 @@ class WheelOfFortune {
             }
         }
         lines.push(currentLine);
-        
+
         return lines;
     }
 
@@ -124,8 +127,8 @@ class WheelOfFortune {
         const numSections = this.sections.length;
         const anglePerSection = (Math.PI * 2) / numSections;
 
-        // Clear canvas
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        // Clear canvas using display size
+        this.ctx.clearRect(0, 0, this.displaySize, this.displaySize);
 
         // Save context state
         this.ctx.save();
@@ -156,12 +159,12 @@ class WheelOfFortune {
             this.ctx.rotate(startAngle + anglePerSection / 2);
             this.ctx.textAlign = 'center';
             this.ctx.fillStyle = '#fff';
-            
+
             // Adjust font size based on text length and available space
             const text = this.sections[i].text;
             const maxWidth = this.radius * 0.5; // Maximum width for text
             let fontSize = 18;
-            
+
             // Reduce font size for longer text
             if (text.length > 15) {
                 fontSize = 14;
@@ -169,9 +172,9 @@ class WheelOfFortune {
             if (text.length > 20) {
                 fontSize = 12;
             }
-            
+
             this.ctx.font = `bold ${fontSize}px Arial`;
-            
+
             // Measure text width and adjust if needed
             let textWidth = this.ctx.measureText(text).width;
             if (textWidth > maxWidth) {
@@ -182,7 +185,7 @@ class WheelOfFortune {
                     const lineHeight = fontSize + 2;
                     const totalHeight = lines.length * lineHeight;
                     const startY = -totalHeight / 2 + lineHeight / 2;
-                    
+
                     lines.forEach((line, index) => {
                         this.ctx.fillText(line, this.radius * 0.65, startY + index * lineHeight);
                     });
@@ -198,7 +201,7 @@ class WheelOfFortune {
             } else {
                 this.ctx.fillText(text, this.radius * 0.65, 5);
             }
-            
+
             this.ctx.restore();
         }
 
